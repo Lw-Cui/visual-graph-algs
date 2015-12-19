@@ -69,6 +69,45 @@ public class Graph {
 
     private boolean[] marked;
 
+    public void breathFirstSearch() {
+        StdDraw.setPenRadius(0.005);
+        Color color = StdDraw.BLACK;
+
+        marked = new boolean[V];
+        for (int i = 0; i < V; i++)
+            marked[i] = false;
+
+
+        for (int i = 0; i < V; i++)
+            if (!marked[i]) {
+                bfs(points[i], color);
+                StdDraw.show();
+            }
+    }
+
+    private void bfs(Point point, Color color) {
+        Queue<Point> q;
+        q = new Queue<Point>();
+
+        marked[point.index()] = true;
+        q.enqueue(point);
+
+        while (!q.isEmpty()) {
+            Point u = q.dequeue();
+
+            u.drawItself(color, 0.7);
+            for (Point v: u.adj())
+                if (!marked[v.index()]) {
+                    marked[v.index()] = true;
+                    q.enqueue(v);
+
+                    u.drawTo(v, color, 0.003);
+                    StdDraw.show(200);
+                    v.drawItself(color, 0.7);
+                }
+        }
+    }
+
     public void depthFirstSearch() {
         StdDraw.setPenRadius(0.005);
 
@@ -76,9 +115,10 @@ public class Graph {
         for (int i = 0; i < V; i++)
             marked[i] = false;
 
-        Color color = StdDraw.BLUE;
+        Color color = StdDraw.BLACK;
         for (int i = 0; i < V; i++) {
             dfs(points[i], color);
+            StdDraw.show();
             color = color.darker().darker();
         }
     }
@@ -90,10 +130,13 @@ public class Graph {
             for (Point v: u.adj())
                 if (!marked[v.index()]) {
                     u.drawTo(v, color, 0.003);
-                    //StdDraw.show(300);
+                    StdDraw.show(200);
                     dfs(v, color);
                 }
         }
+    }
+
+    public void prime() {
     }
 
     public static void main(String[] args) {
@@ -101,6 +144,12 @@ public class Graph {
         int E = Integer.parseInt(args[1]);
         Graph g = new Graph(V, E);
         g.draw();
-        g.depthFirstSearch();
+
+        if (args[2].equals("DFS"))
+            g.depthFirstSearch();
+        if (args[2].equals("BFS"))
+            g.breathFirstSearch();
+        if (args[2].equals("PRIME"))
+            g.prime();
     }
 }
